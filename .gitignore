@@ -78,3 +78,9 @@ crashlytics-build.properties
 # Exceptions
 !*.dll
 !*.obj
+
+# Local test builds (может появиться папка при сборке)
+*/[Bb]uild*/
+
+# MacOS системные файлы (если работаешь на Mac)
+.DS_Store
