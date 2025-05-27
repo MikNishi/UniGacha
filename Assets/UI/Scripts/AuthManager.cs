@@ -1,24 +1,38 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class AuthManager : MonoBehaviour
 {
+    // Существующие поля
     public TMP_InputField nameInputField;
     public TMP_Text greetingText;
-    public GameObject inputPanel;        
-    public GameObject welcomePanel;      
-    public GameObject mainMenuPanel;     
+    public GameObject inputPanel;
+    public GameObject welcomePanel;
+    public GameObject mainMenuPanel;
 
-    private const string PlayerNameKey = "PlayerName";
-    private string currentName = "";
+    // Новые поля для подтверждения
+    public GameObject deleteConfirmationPanel; // Панель с кнопками "Удалить"/"Не удалять"
+    public Button confirmDeleteButton;
+    public Button cancelDeleteButton;
 
-    void Start()
+    private void Start()
     {
-        if (PlayerPrefs.HasKey(PlayerNameKey))
+        // Инициализация подтверждения
+        if (deleteConfirmationPanel != null)
         {
-            currentName = PlayerPrefs.GetString(PlayerNameKey);
-            ShowWelcome(currentName);
+            deleteConfirmationPanel.SetActive(false);
+            confirmDeleteButton.onClick.AddListener(ConfirmDelete);
+            cancelDeleteButton.onClick.AddListener(CancelDelete);
+        }
+
+        // Существующая логика загрузки
+        PlayerData playerData = SaveManager.LoadPlayerData();
+
+        if (!string.IsNullOrEmpty(playerData.playerName))
+        {
+            ShowWelcome(playerData.playerName);
         }
         else
         {
@@ -28,19 +42,22 @@ public class AuthManager : MonoBehaviour
         }
     }
 
+    // Остальные существующие методы без изменений
     public void OnContinueClicked()
     {
         string playerName = nameInputField.text.Trim();
 
         if (!string.IsNullOrEmpty(playerName))
         {
-            PlayerPrefs.SetString(PlayerNameKey, playerName);
-            PlayerPrefs.Save();
+            PlayerData playerData = SaveManager.LoadPlayerData();
+            playerData.playerName = playerName;
+            SaveManager.SavePlayerData(playerData);
+
             ShowWelcome(playerName);
         }
         else
         {
-            Debug.Log("��� �� �������!");
+            Debug.Log("Имя не введено!");
         }
     }
 
@@ -49,21 +66,54 @@ public class AuthManager : MonoBehaviour
         inputPanel.SetActive(false);
         welcomePanel.SetActive(true);
         mainMenuPanel.SetActive(false);
-        greetingText.text = $"�����������, {name}!";
+        greetingText.text = $"Приветствую, {name}!";
     }
 
-    // ���������� ��� ������� ������ "�������, ����� ����������"
     public void OnWelcomeContinue()
     {
         welcomePanel.SetActive(false);
         mainMenuPanel.SetActive(true);
     }
 
+    // Измененный метод ResetPrefs - теперь только показывает подтверждение
     public void ResetPrefs()
     {
-        PlayerPrefs.DeleteAll();
-        PlayerPrefs.Save();
+        if (deleteConfirmationPanel != null)
+        {
+            deleteConfirmationPanel.SetActive(true);
+            inputPanel.SetActive(false);
+            welcomePanel.SetActive(false);
+
+        }
+        else
+        {
+            // Если панель не назначена, удаляем сразу
+            PerformDataDeletion();
+        }
+    }
+
+    // Новый метод - подтверждение удаления
+    private void ConfirmDelete()
+    {
+        PerformDataDeletion();
+        deleteConfirmationPanel.SetActive(false);
+        inputPanel.SetActive(true);
+    }
+
+    // Новый метод - отмена удаления
+    private void CancelDelete()
+    {
+        deleteConfirmationPanel.SetActive(false);
+        welcomePanel.SetActive(true);
+    }
+
+    // Вынесенная логика удаления данных
+    private void PerformDataDeletion()
+    {
+        SaveManager.DeleteAllSaves();
         welcomePanel.SetActive(false);
         inputPanel.SetActive(true);
+        nameInputField.text = "";
+        Debug.Log("Данные успешно удалены");
     }
 }
