@@ -6,9 +6,9 @@ public class AuthManager : MonoBehaviour
 {
     public TMP_InputField nameInputField;
     public TMP_Text greetingText;
-    public GameObject inputPanel;        // Ввод имени
-    public GameObject welcomePanel;      // "С возвращением" + кнопка
-    public GameObject mainMenuPanel;     // Главное меню
+    public GameObject inputPanel;        
+    public GameObject welcomePanel;      
+    public GameObject mainMenuPanel;     
 
     private const string PlayerNameKey = "PlayerName";
     private string currentName = "";
@@ -40,7 +40,7 @@ public class AuthManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("Имя не введено!");
+            Debug.Log("пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
         }
     }
 
@@ -49,10 +49,10 @@ public class AuthManager : MonoBehaviour
         inputPanel.SetActive(false);
         welcomePanel.SetActive(true);
         mainMenuPanel.SetActive(false);
-        greetingText.text = $"Приветствую, {name}!";
+        greetingText.text = $"пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, {name}!";
     }
 
-    // Вызывается при нажатии кнопки "Нажмите, чтобы продолжить"
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ"
     public void OnWelcomeContinue()
     {
         welcomePanel.SetActive(false);
