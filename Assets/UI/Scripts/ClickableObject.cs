@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 
 public class ClickableObject : MonoBehaviour, IPointerClickHandler
 {
@@ -14,6 +15,12 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
     public ActionType action;
 
     public GameObject targetPanel; // Используется, если нужно показывать/скрывать панель
+
+    public void Start()
+    {
+        if (targetPanel != null)
+            targetPanel.SetActive(false);
+    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
