@@ -2895,6 +2895,7 @@ MonoBehaviour:
     - m_FirstAdjustmentRecord:
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         m_GlyphIndex: 980
         m_GlyphValueRecord:
           m_XPlacement: 0
@@ -2904,6 +2905,8 @@ MonoBehaviour:
       m_SecondAdjustmentRecord:
         m_GlyphIndex: 1002
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         m_GlyphIndex: 961
@@ -3425,6 +3428,9 @@ MonoBehaviour:
       m_SecondAdjustmentRecord:
         m_GlyphIndex: 1012
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
