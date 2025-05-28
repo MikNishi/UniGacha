@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class ClickableObject : MonoBehaviour, IPointerClickHandler
 {
@@ -25,7 +26,7 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
                 UIManager.Instance.ToggleMenuPanel();
                 break;
             case ActionType.StartRoguelike:
-                Debug.Log("Запуск мини-игры");
+                SceneManager.LoadScene("Vampires"); 
                 break;
             case ActionType.OpenGacha:
                 Debug.Log("Открыть гачу");
