@@ -11,17 +11,19 @@ public class GachaManager : MonoBehaviour
         public string resultType;
         public string reward;
     }
+
     private PlayerData player;
     public GameObject resultPanel;
     public Image resultIcon;
     public TMP_Text resultText;
-    
+
+    private bool isResultVisible = false;
+    private Queue<GachaResult> resultQueue = new Queue<GachaResult>();
+
     private void Start()
     {
         player = SaveManager.LoadPlayerData();
     }
-
-    private bool isResultVisible = false;
 
     private void ShowResult(string rewardText, Sprite iconSprite)
     {
@@ -35,6 +37,7 @@ public class GachaManager : MonoBehaviour
     {
         resultPanel.SetActive(false);
         isResultVisible = false;
+        ShowNextResultInQueue(); // Показываем следующий результат, если есть
     }
 
     public void PullOnce()
@@ -45,7 +48,7 @@ public class GachaManager : MonoBehaviour
             return;
         }
 
-        if ( player.tickets > 0 || player.gems >= 160 )
+        if (player.tickets > 0 || player.gems >= 160)
         {
             SpendCurrency();
             GachaResult result = RollGacha();
@@ -66,11 +69,35 @@ public class GachaManager : MonoBehaviour
             return;
         }
 
-        List<GachaResult> results = new List<GachaResult>();
-
         for (int i = 0; i < 10; i++)
         {
-            PullOnce();
+            if (player.tickets > 0 || player.gems >= 160)
+            {
+                SpendCurrency();
+                GachaResult result = RollGacha();
+                resultQueue.Enqueue(result);
+            }
+            else
+            {
+                Debug.Log("Недостаточно валюты для 10 круток.");
+                break;
+            }
+        }
+
+        SaveManager.SavePlayerData(player);
+        ShowNextResultInQueue(); // начинаем показ
+    }
+
+    private void ShowNextResultInQueue()
+    {
+        if (resultQueue.Count > 0)
+        {
+            GachaResult nextResult = resultQueue.Dequeue();
+            ApplyResult(nextResult);
+        }
+        else
+        {
+            Debug.Log("Все результаты показаны.");
         }
     }
 
@@ -86,15 +113,12 @@ public class GachaManager : MonoBehaviour
         }
     }
 
-
-
     private GachaResult RollGacha()
     {
-        // Если накопилось 100 круток без персонажа — даём персонажа гарантированно
         if (player.pullsSinceLastCharacter >= 9)
         {
             player.pullsSinceLastCharacter = 0;
-            int guaranteedCharacterId = 1; // Можно случайный или фиксированный ID
+            int guaranteedCharacterId = 1;
             return new GachaResult { resultType = "Персонаж-Гарант", reward = guaranteedCharacterId.ToString() };
         }
 
@@ -103,26 +127,25 @@ public class GachaManager : MonoBehaviour
         if (roll <= 3f)
         {
             Debug.Log("Я выпаллллллл!!!!!!");
-            player.pullsSinceLastCharacter = 0; // сбросить счётчик
+            player.pullsSinceLastCharacter = 0;
             int characterId = 1;
             return new GachaResult { resultType = "Персонаж", reward = characterId.ToString() };
         }
         else if (roll <= 18f)
         {
             player.gems += 80;
-            player.pullsSinceLastCharacter++; // +1 к счётчику
+            player.pullsSinceLastCharacter++;
             return new GachaResult { resultType = "Кэшбек", reward = "+80 примогемов" };
         }
         else if (roll <= 33f)
         {
-            player.pullsSinceLastCharacter++; // +1 к счётчику
+            player.pullsSinceLastCharacter++;
             return new GachaResult { resultType = "Провал", reward = "Ничего не выпало" };
         }
         else
         {
-
             float subRoll = Random.Range(0f, 100f);
-            player.pullsSinceLastCharacter++; // +1 к счётчику
+            player.pullsSinceLastCharacter++;
 
             if (subRoll < 60f)
             {
@@ -142,15 +165,14 @@ public class GachaManager : MonoBehaviour
         }
     }
 
-
     private void ApplyResult(GachaResult result)
     {
-        if (result.resultType == "Персонаж")
+        if (result.resultType == "Персонаж" || result.resultType == "Персонаж-Гарант")
         {
             int characterId = int.Parse(result.reward);
             player.AddCharacterPull(characterId);
             Sprite characterSprite = Resources.Load<Sprite>("Icons/Kotofei");
-            ShowResult($"Выпал персонаж #{characterId}", characterSprite);  
+            ShowResult($"Выпал персонаж #{characterId}", characterSprite);
         }
         else if (result.resultType == "Кэшбек")
         {
@@ -168,6 +190,4 @@ public class GachaManager : MonoBehaviour
             ShowResult("Увы, попробуй еще раз", failIcon);
         }
     }
-
-
 }
