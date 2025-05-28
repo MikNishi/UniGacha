@@ -19,9 +19,9 @@ public class GachaManager : MonoBehaviour
 
     public void PullOnce()
     {
-        if (player.gems >= 160 || GetTickets() >= 1)
+        if ( player.tickets > 0 || player.gems >= 160 )
         {
-            SpendCurrency(1);
+            SpendCurrency();
             GachaResult result = RollGacha();
             ApplyResult(result);
             SaveManager.SavePlayerData(player);
@@ -38,68 +38,59 @@ public class GachaManager : MonoBehaviour
 
         for (int i = 0; i < 10; i++)
         {
-            if (player.gems >= 160 || GetTickets() >= 1)
-            {
-                SpendCurrency(1);
-                GachaResult result = RollGacha();
-                ApplyResult(result);
-                results.Add(result);
-                Debug.Log("ОК 10");
-            }
-            else
-            {
-                Debug.Log("Осталось меньше 10 круток/примогемов");
-                break;
-            }
-        }
-
-        SaveManager.SavePlayerData(player);
-        foreach (var res in results)
-        {
-            Debug.Log("Результат: " + res.resultType + " - " + res.reward);
+            PullOnce();
         }
     }
 
-    private int GetTickets()
+    private void SpendCurrency()
     {
-        var ticket = player.resources.Find(r => r.id == 1); // id = 1 для круток
-        return ticket != null ? ticket.amount : 0;
-    }
-
-    private void SpendCurrency(int pulls)
-    {
-        var ticket = player.resources.Find(r => r.id == 1);
-        if (ticket != null && ticket.amount >= pulls)
+        if (player.tickets != 0)
         {
-            ticket.amount -= pulls;
+            player.tickets -= 1;
         }
         else
         {
-            player.gems -= 160 * pulls;
+            player.gems -= 160;
         }
     }
 
+
+
     private GachaResult RollGacha()
     {
+        // Если накопилось 100 круток без персонажа — даём персонажа гарантированно
+        if (player.pullsSinceLastCharacter >= 9)
+        {
+            player.pullsSinceLastCharacter = 0;
+            int guaranteedCharacterId = 1; // Можно случайный или фиксированный ID
+            return new GachaResult { resultType = "Персонаж-Гарант", reward = guaranteedCharacterId.ToString() };
+        }
+
         float roll = Random.Range(0f, 100f);
 
-        if (roll <= 30f)
+        if (roll <= 3f)
         {
-            return new GachaResult { resultType = "Персонаж", reward = "Новый персонаж!" };
+            player.pullsSinceLastCharacter = 0; // сбросить счётчик
+            int characterId = 1;
+            return new GachaResult { resultType = "Персонаж-Рандом", reward = characterId.ToString() };
         }
         else if (roll <= 18f)
         {
-            player.gems += 80; // Кэшбек половины стоимости
+            player.gems += 80;
+            player.pullsSinceLastCharacter++; // +1 к счётчику
             return new GachaResult { resultType = "Кэшбек", reward = "+80 примогемов" };
         }
         else if (roll <= 33f)
         {
+            player.pullsSinceLastCharacter++; // +1 к счётчику
             return new GachaResult { resultType = "Провал", reward = "Ничего не выпало" };
         }
         else
         {
-            // Остальные 67%: 100 / 1000 / 10000 золота
+
             float subRoll = Random.Range(0f, 100f);
+            player.pullsSinceLastCharacter++; // +1 к счётчику
+
             if (subRoll < 60f)
             {
                 player.coins += 100;
@@ -118,9 +109,25 @@ public class GachaManager : MonoBehaviour
         }
     }
 
+
     private void ApplyResult(GachaResult result)
     {
-        // Здесь можно реализовать добавление персонажа в список, вывод на экран и т.д.
-        Debug.Log($"Выпало: {result.resultType} — {result.reward}");
+        if (result.resultType == "Персонаж-Рандом")
+        {
+            int characterId = int.Parse(result.reward);
+            player.AddCharacterPull(characterId);
+            Debug.Log($"Выпал персонаж с ID {characterId}. Добавлен/увеличен дубликат. - Рандом");
+        }
+        if (result.resultType == "Персонаж-Гарант")
+        {
+            int characterId = int.Parse(result.reward);
+            player.AddCharacterPull(characterId);
+            Debug.Log($"Выпал персонаж с ID {characterId}. Добавлен/увеличен дубликат. - Гарант");
+        }
+        else
+        {
+            Debug.Log($"Выпало: {result.resultType} — {result.reward}");
+        }
     }
+
 }
