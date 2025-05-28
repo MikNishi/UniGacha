@@ -17,12 +17,16 @@ public class GachaManager : MonoBehaviour
     public Image resultIcon;
     public TMP_Text resultText;
 
+    public TMP_Text gemsText;      
+    public TMP_Text ticketsText;   
+
     private bool isResultVisible = false;
     private Queue<GachaResult> resultQueue = new Queue<GachaResult>();
 
     private void Start()
     {
         player = SaveManager.LoadPlayerData();
+        UpdateCurrencyDisplay();
     }
 
     private void ShowResult(string rewardText, Sprite iconSprite)
@@ -54,6 +58,7 @@ public class GachaManager : MonoBehaviour
             GachaResult result = RollGacha();
             ApplyResult(result);
             SaveManager.SavePlayerData(player);
+            UpdateCurrencyDisplay();
         }
         else
         {
@@ -85,6 +90,7 @@ public class GachaManager : MonoBehaviour
         }
 
         SaveManager.SavePlayerData(player);
+        UpdateCurrencyDisplay();
         ShowNextResultInQueue(); // начинаем показ
     }
 
@@ -111,6 +117,12 @@ public class GachaManager : MonoBehaviour
         {
             player.gems -= 160;
         }
+    }
+
+    private void UpdateCurrencyDisplay()
+    {
+        gemsText.text = $"Примогемы: {player.gems}";
+        ticketsText.text = $"Крутки: {player.tickets}";
     }
 
     private GachaResult RollGacha()
