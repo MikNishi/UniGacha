@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Rendering;
 
 public class ClickableObject : MonoBehaviour, IPointerClickHandler
 {
@@ -9,33 +8,33 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
         OpenMenu,
         StartRoguelike,
         OpenGacha,
-        Custom
+        Custom,
+        OpenCharacter,
+        OpenDepartment,
     }
 
     public ActionType action;
 
-    public GameObject targetPanel; // Используется, если нужно показывать/скрывать панель
-
-    public void Start()
-    {
-        if (targetPanel != null)
-            targetPanel.SetActive(false);
-    }
+  
 
     public void OnPointerClick(PointerEventData eventData)
     {
         switch (action)
         {
             case ActionType.OpenMenu:
-                if (targetPanel != null)
-                    targetPanel.SetActive(!targetPanel.activeSelf);
+                UIManager.Instance.ToggleMenuPanel();
                 break;
             case ActionType.StartRoguelike:
                 Debug.Log("Запуск мини-игры");
-                // Загрузить сцену или активировать объект
                 break;
             case ActionType.OpenGacha:
                 Debug.Log("Открыть гачу");
+                break;
+            case ActionType.OpenCharacter:
+                UIManager.Instance.ToggleCharacterPanel();
+                break;
+            case ActionType.OpenDepartment:
+                UIManager.Instance.ToggleDepartmentPanel();
                 break;
             case ActionType.Custom:
                 Debug.Log("Пользовательская логика");
@@ -43,4 +42,3 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
         }
     }
 }
-     
