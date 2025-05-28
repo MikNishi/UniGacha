@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Material-436-A_AmbientOcclusion_0: -3908825182250363054
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

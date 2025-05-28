@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Material-436-A_Specular_0: -4396044392180711250
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
