@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      plastic_0012_normal_opengl_1k_0: -286489809372771230
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -147,7 +147,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      plastic_0012_height_1k_0: -6433951934749966369
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

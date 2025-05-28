@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 using System.Collections.Generic;
 
 public class GachaManager : MonoBehaviour
@@ -9,16 +11,40 @@ public class GachaManager : MonoBehaviour
         public string resultType;
         public string reward;
     }
-
     private PlayerData player;
-
+    public GameObject resultPanel;
+    public Image resultIcon;
+    public TMP_Text resultText;
+    
     private void Start()
     {
         player = SaveManager.LoadPlayerData();
     }
 
+    private bool isResultVisible = false;
+
+    private void ShowResult(string rewardText, Sprite iconSprite)
+    {
+        resultPanel.SetActive(true);
+        resultText.text = rewardText;
+        resultIcon.sprite = iconSprite;
+        isResultVisible = true;
+    }
+
+    public void HideResultPanel()
+    {
+        resultPanel.SetActive(false);
+        isResultVisible = false;
+    }
+
     public void PullOnce()
     {
+        if (isResultVisible)
+        {
+            Debug.Log("Сначала закрой панель результата.");
+            return;
+        }
+
         if ( player.tickets > 0 || player.gems >= 160 )
         {
             SpendCurrency();
@@ -34,6 +60,12 @@ public class GachaManager : MonoBehaviour
 
     public void PullTen()
     {
+        if (isResultVisible)
+        {
+            Debug.Log("Сначала закрой панель результата.");
+            return;
+        }
+
         List<GachaResult> results = new List<GachaResult>();
 
         for (int i = 0; i < 10; i++)
@@ -70,9 +102,10 @@ public class GachaManager : MonoBehaviour
 
         if (roll <= 3f)
         {
+            Debug.Log("Я выпаллллллл!!!!!!");
             player.pullsSinceLastCharacter = 0; // сбросить счётчик
             int characterId = 1;
-            return new GachaResult { resultType = "Персонаж-Рандом", reward = characterId.ToString() };
+            return new GachaResult { resultType = "Персонаж", reward = characterId.ToString() };
         }
         else if (roll <= 18f)
         {
@@ -112,22 +145,29 @@ public class GachaManager : MonoBehaviour
 
     private void ApplyResult(GachaResult result)
     {
-        if (result.resultType == "Персонаж-Рандом")
+        if (result.resultType == "Персонаж")
         {
             int characterId = int.Parse(result.reward);
             player.AddCharacterPull(characterId);
-            Debug.Log($"Выпал персонаж с ID {characterId}. Добавлен/увеличен дубликат. - Рандом");
+            Sprite characterSprite = Resources.Load<Sprite>("Icons/Kotofei");
+            ShowResult($"Выпал персонаж #{characterId}", characterSprite);  
         }
-        if (result.resultType == "Персонаж-Гарант")
+        else if (result.resultType == "Кэшбек")
         {
-            int characterId = int.Parse(result.reward);
-            player.AddCharacterPull(characterId);
-            Debug.Log($"Выпал персонаж с ID {characterId}. Добавлен/увеличен дубликат. - Гарант");
+            Sprite gemIcon = Resources.Load<Sprite>("Icons/gem");
+            ShowResult(result.reward, gemIcon);
+        }
+        else if (result.resultType == "Голда")
+        {
+            Sprite coinIcon = Resources.Load<Sprite>("Icons/coin");
+            ShowResult(result.reward, coinIcon);
         }
         else
         {
-            Debug.Log($"Выпало: {result.resultType} — {result.reward}");
+            Sprite failIcon = Resources.Load<Sprite>("Icons/fail");
+            ShowResult("Увы, попробуй еще раз", failIcon);
         }
     }
+
 
 }
