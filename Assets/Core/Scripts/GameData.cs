@@ -10,7 +10,11 @@ public class CharacterData
     public int damage;
     public int unlockLevel = 1;
     public bool isUnlocked = false;
+
+    // Новое поле — список пассивок
+    public List<PassiveBonus> passives = new List<PassiveBonus>();
 }
+
 
 [System.Serializable]
 public class ResourceData
