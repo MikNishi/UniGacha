@@ -30,7 +30,7 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
                 SceneManager.LoadScene("Vampires");
                 break;
             case ActionType.OpenGacha:
-                Debug.Log("Открыть гачу");
+                UIManager.Instance.ToggleGachaPanel();
                 break;
             case ActionType.OpenCharacter:
                 UIManager.Instance.ToggleCharacterPanel();
