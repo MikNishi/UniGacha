@@ -12,11 +12,12 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
         Custom,
         OpenCharacter,
         OpenDepartment,
+        OpenInventory,
     }
 
     public ActionType action;
 
-  
+
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -26,7 +27,7 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
                 UIManager.Instance.ToggleMenuPanel();
                 break;
             case ActionType.StartRoguelike:
-                SceneManager.LoadScene("Vampires"); 
+                SceneManager.LoadScene("Vampires");
                 break;
             case ActionType.OpenGacha:
                 Debug.Log("Открыть гачу");
@@ -37,9 +38,10 @@ public class ClickableObject : MonoBehaviour, IPointerClickHandler
             case ActionType.OpenDepartment:
                 UIManager.Instance.ToggleDepartmentPanel();
                 break;
-            case ActionType.Custom:
-                Debug.Log("Пользовательская логика");
+            case ActionType.OpenInventory:
+                UIManager.Instance.ToggleInventoryPanel();
                 break;
+
         }
     }
 }
