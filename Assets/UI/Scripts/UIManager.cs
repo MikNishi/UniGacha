@@ -123,4 +123,20 @@ public class UIManager : MonoBehaviour
         }
         UpdateDarkOverlay();
     }
+
+    public void CloseActivePanel()
+    {
+        if (targetPanel != null && targetPanel.activeSelf)
+            targetPanel.SetActive(false);
+        else if (characterPanel != null && characterPanel.activeSelf)
+            characterPanel.SetActive(false);
+        else if (departmentPanel != null && departmentPanel.activeSelf)
+            departmentPanel.SetActive(false);
+        else if (inventoryPanel != null && inventoryPanel.activeSelf)
+            inventoryPanel.SetActive(false);
+        else if (GachaPanel != null && GachaPanel.activeSelf)
+            GachaPanel.SetActive(false);
+
+        UpdateDarkOverlay();
+    }
 }
